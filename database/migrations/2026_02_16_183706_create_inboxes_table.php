@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['operador', 'cliente'])->default('cliente');
-        });
-    }
+        Schema::create('inboxes', function (Blueprint $table) {
+        $table->id();
+        $table->string('nome');
+        $table->text('descricao')->nullable();
+        $table->boolean('ativo')->default(true);
+        $table->timestamps();
+});
 
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('inboxes');
     }
 };
