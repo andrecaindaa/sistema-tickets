@@ -7,63 +7,63 @@ use Illuminate\Http\Request;
 
 class EntidadeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $entidades = Entidade::all();
+        $entidades = Entidade::orderBy('nome')->get();
         return view('entidades.index', compact('entidades'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('entidades.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nif' => 'required|string|max:20|unique:entidades,nif',
+            'nome' => 'required|string|max:255',
+            'telefone' => 'nullable|string|max:20',
+            'telemovel' => 'nullable|string|max:20',
+            'website' => 'nullable|url|max:255',
+            'email' => 'nullable|email|max:255',
+            'notas_internas' => 'nullable|string'
+        ]);
+
+        Entidade::create($validated);
+
+        return redirect()->route('entidades.index')
+            ->with('success', 'Entidade criada com sucesso.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Entidade $entidade)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Entidade $entidade)
     {
-        //
+        return view('entidades.edit', compact('entidade'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Entidade $entidade)
-    {
-        //
-    }
+   public function update(Request $request, Entidade $entidade)
+{
+    $validated = $request->validate([
+        'nif' => 'required|string|max:20|unique:entidades,nif,' . $entidade->id,
+        'nome' => 'required|string|max:255',
+        'telefone' => 'nullable|string|max:20',
+        'telemovel' => 'nullable|string|max:20',
+        'website' => 'nullable|url|max:255',
+        'email' => 'nullable|email|max:255',
+        'notas_internas' => 'nullable|string'
+    ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Entidade $entidade)
-    {
-        //
-    }
+    $entidade->update($validated);
 
+    return redirect()->route('entidades.index')
+        ->with('success', 'Entidade atualizada com sucesso.');
+}
 
+public function destroy(Entidade $entidade)
+{
+    $entidade->delete();
+
+    return redirect()->route('entidades.index')
+        ->with('success', 'Entidade eliminada com sucesso.');
+}
 }
