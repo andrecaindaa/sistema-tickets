@@ -11,4 +11,10 @@ class Funcao extends Model
     protected $table = 'funcoes';
 
     protected $fillable = ['nome'];
+
+    public function contactos()
+    {
+        return $this->hasMany(Contacto::class);
+    }
+
 }
