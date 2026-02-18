@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inbox;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class InboxController extends Controller
 {
@@ -20,16 +21,39 @@ class InboxController extends Controller
      */
     public function create()
     {
-        //
+        $operadores = User::where('role', 'operador')->get();
+
+        return view('inboxes.create', compact('operadores'));
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+   public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'nullable|string',
+            'ativo' => 'boolean',
+            'operadores' => 'nullable|array',
+            'operadores.*' => 'exists:users,id'
+        ]);
+
+        $inbox = Inbox::create([
+            'nome' => $validated['nome'],
+            'descricao' => $validated['descricao'] ?? null,
+            'ativo' => $validated['ativo'] ?? true,
+        ]);
+
+        if(isset($validated['operadores'])) {
+            $inbox->operadores()->sync($validated['operadores']);
+        }
+
+        return redirect()->route('inboxes.index')
+            ->with('success', 'Inbox criada com sucesso.');
     }
+
 
     /**
      * Display the specified resource.
@@ -44,7 +68,9 @@ class InboxController extends Controller
      */
     public function edit(Inbox $inbox)
     {
-        //
+        $operadores = User::where('role', 'operador')->get();
+
+        return view('inboxes.edit', compact('inbox', 'operadores'));
     }
 
     /**
@@ -52,7 +78,24 @@ class InboxController extends Controller
      */
     public function update(Request $request, Inbox $inbox)
     {
-        //
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'nullable|string',
+            'ativo' => 'boolean',
+            'operadores' => 'nullable|array',
+            'operadores.*' => 'exists:users,id'
+        ]);
+
+        $inbox->update([
+            'nome' => $validated['nome'],
+            'descricao' => $validated['descricao'] ?? null,
+            'ativo' => $validated['ativo'] ?? true,
+        ]);
+
+        $inbox->operadores()->sync($validated['operadores'] ?? []);
+
+        return redirect()->route('inboxes.index')
+            ->with('success', 'Inbox atualizada com sucesso.');
     }
 
     /**

@@ -56,4 +56,10 @@ class User extends Authenticatable
         return $this->role === 'cliente';
     }
 
+    public function inboxes()
+    {
+        return $this->belongsToMany(Inbox::class);
+    }
+
+
 }
