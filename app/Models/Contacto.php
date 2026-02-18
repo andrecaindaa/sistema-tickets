@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Contacto extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'nome',
         'funcao_id',
@@ -22,6 +25,7 @@ class Contacto extends Model
 
     public function entidades()
     {
-        return $this->belongsToMany(Entidade::class);
+        return $this->belongsToMany(Entidade::class)
+                    ->withTimestamps();
     }
 }

@@ -4,10 +4,13 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\EntidadeController;
+use App\Http\Controllers\ContactoController;
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('entidades', EntidadeController::class);
 });
+
+Route::resource('contactos', ContactoController::class);
 
 
 Route::get('/', function () {
