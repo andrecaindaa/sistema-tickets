@@ -10,6 +10,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('entidades', EntidadeController::class);
 });
 
+Route::resource('inboxes', InboxController::class);
+
+
 Route::resource('contactos', ContactoController::class);
 
 
