@@ -21,11 +21,6 @@
                 Nova Inbox
             </a>
 
-            <a href="{{ route('inboxes.tickets.index', $inbox) }}"
-            class="text-blue-600 hover:underline">
-            Ver Tickets
-            </a>
-
         </div>
 
         <div class="bg-white shadow rounded-lg overflow-hidden">
@@ -62,7 +57,14 @@
                                     </span>
                                 @endforelse
                             </td>
+
+
                             <td class="px-4 py-2 text-right">
+                                 <a href="{{ route('inboxes.tickets.index', $inbox) }}"
+                                class="text-blue-600 mr-2">
+                                    Tickets
+                                </a>
+
                                 <a href="{{ route('inboxes.edit', $inbox) }}"
                                    class="text-yellow-600 mr-2">
                                     Editar
