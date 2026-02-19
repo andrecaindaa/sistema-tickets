@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use app\Models\Inbox;
-use app\Models\Ticket;
-use app\Models\User;
+use App\Models\Inbox;
+use App\Models\Ticket;
+use App\Models\User;
 
 class TicketController extends Controller
 {
