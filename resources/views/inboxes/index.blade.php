@@ -20,6 +20,12 @@
                class="px-4 py-2 bg-blue-600 text-white rounded-lg">
                 Nova Inbox
             </a>
+
+            <a href="{{ route('inboxes.tickets.index', $inbox) }}"
+            class="text-blue-600 hover:underline">
+            Ver Tickets
+            </a>
+
         </div>
 
         <div class="bg-white shadow rounded-lg overflow-hidden">
