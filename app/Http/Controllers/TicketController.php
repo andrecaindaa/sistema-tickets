@@ -11,10 +11,15 @@ class TicketController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Inbox $inbox)
     {
-        //
+        $tickets = $inbox->tickets()
+            ->latest()
+            ->get();
+
+        return view('tickets.index', compact('inbox', 'tickets'));
     }
+
 
     /**
      * Show the form for creating a new resource.
