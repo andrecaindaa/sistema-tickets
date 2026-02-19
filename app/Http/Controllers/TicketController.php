@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use app\Models\Inbox;
 use app\Models\Ticket;
+use app\Models\User;
 
 class TicketController extends Controller
 {
@@ -55,9 +56,13 @@ class TicketController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Ticket $ticket)
     {
-        //
+        $ticket->load(['cliente', 'operador', 'inbox']);
+
+        $operadores = User::where('role', 'operador')->get();
+
+        return view('tickets.show', compact('ticket', 'operadores'));
     }
 
     /**
@@ -71,9 +76,20 @@ class TicketController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Ticket $ticket)
     {
-        //
+        if (!auth()->user()->isOperador()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'estado' => 'required|in:aberto,em_atendimento,resolvido,fechado',
+            'operador_id' => 'nullable|exists:users,id',
+        ]);
+
+        $ticket->update($validated);
+
+        return back()->with('success', 'Ticket atualizado.');
     }
 
     /**
