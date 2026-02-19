@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+          'role',
     ];
 
     /**
@@ -60,6 +61,17 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Inbox::class);
     }
+
+    public function ticketsCriados()
+    {
+        return $this->hasMany(Ticket::class, 'user_id');
+    }
+
+    public function ticketsAtribuidos()
+    {
+        return $this->hasMany(Ticket::class, 'operador_id');
+    }
+
 
 
 }

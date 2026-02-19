@@ -13,4 +13,10 @@ class Inbox extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+
 }
