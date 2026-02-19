@@ -14,9 +14,18 @@ class TicketController extends Controller
      */
     public function index(Inbox $inbox)
     {
-        $tickets = $inbox->tickets()
-            ->latest()
-            ->get();
+        $user = auth()->user();
+
+        if ($user->isCliente()) {
+            $tickets = $inbox->tickets()
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get();
+        } else {
+            $tickets = $inbox->tickets()
+                ->latest()
+                ->get();
+        }
 
         return view('tickets.index', compact('inbox', 'tickets'));
     }
@@ -58,6 +67,13 @@ class TicketController extends Controller
      */
     public function show(Ticket $ticket)
     {
+        $user = auth()->user();
+
+        if ($user->isCliente() && $ticket->user_id !== $user->id) {
+            abort(403);
+        }
+
+
         $ticket->load(['cliente', 'operador', 'inbox']);
 
         $operadores = User::where('role', 'operador')->get();
