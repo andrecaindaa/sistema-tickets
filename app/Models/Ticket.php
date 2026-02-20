@@ -30,5 +30,11 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class, 'operador_id');
     }
+
+    public function mensagens()
+    {
+        return $this->hasMany(TicketMessage::class)
+                    ->latest();
+    }
 }
 

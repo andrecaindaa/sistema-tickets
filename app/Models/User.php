@@ -72,6 +72,9 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class, 'operador_id');
     }
 
-
+    public function mensagens()
+    {
+        return $this->hasMany(TicketMessage::class);
+    }
 
 }
