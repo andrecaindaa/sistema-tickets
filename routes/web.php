@@ -6,6 +6,13 @@ use App\Http\Controllers\InboxController;
 use App\Http\Controllers\EntidadeController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TicketMessageController;
+
+
+Route::post(
+    'tickets/{ticket}/messages',
+    [TicketMessageController::class, 'store']
+)->name('tickets.messages.store');
 
 Route::middleware(['auth'])->group(function () {
 

@@ -73,8 +73,8 @@ class TicketController extends Controller
             abort(403);
         }
 
-
-        $ticket->load(['cliente', 'operador', 'inbox']);
+        $ticket->load(['cliente', 'operador', 'inbox', 'mensagens.user']);
+        //$ticket->load(['cliente', 'operador', 'inbox']);
 
         $operadores = User::where('role', 'operador')->get();
 
