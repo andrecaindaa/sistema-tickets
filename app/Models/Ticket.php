@@ -8,13 +8,21 @@ use Illuminate\Support\Facades\DB;
 class Ticket extends Model
 {
     protected $fillable = [
+        'numero',
         'inbox_id',
         'user_id',
         'operador_id',
         'assunto',
         'descricao',
-        'estado',
+        'ticket_tipo_id',
+        'ticket_estado_id',
+        'entidade_id',
+        'contacto_id',
+        'conhecimento',
         'prioridade',
+    ];
+        protected $casts = [
+        'conhecimento' => 'array',
     ];
 
     public function inbox()

@@ -9,35 +9,22 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketMessageController;
 
 
-Route::post(
-    'tickets/{ticket}/messages',
-    [TicketMessageController::class, 'store']
-)->name('tickets.messages.store');
-
 Route::middleware(['auth'])->group(function () {
 
     Route::resource('inboxes', InboxController::class);
 
     Route::resource('inboxes.tickets', TicketController::class)
         ->shallow();
-});
 
-
-Route::middleware(['auth'])->group(function () {
-    Route::resource('tickets', TicketController::class);
-});
-
-
-Route::middleware(['auth'])->group(function () {
     Route::resource('entidades', EntidadeController::class);
+
+    Route::resource('contactos', ContactoController::class);
+
+    Route::post(
+        'tickets/{ticket}/messages',
+        [TicketMessageController::class, 'store']
+    )->name('tickets.messages.store');
 });
-
-
-Route::resource('inboxes', InboxController::class);
-
-
-Route::resource('contactos', ContactoController::class);
-
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,9 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::resource('inboxes', InboxController::class);
-});
+
 
 
 require __DIR__.'/auth.php';
