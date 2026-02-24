@@ -131,6 +131,32 @@ class TicketController extends Controller
             'conhecimento' => $cc,
         ]);
 
+
+
+        // Criar primeira mensagem
+$message = $ticket->mensagens()->create([
+    'mensagem' => $validated['mensagem'],
+    'user_id' => auth()->id(),
+]);
+
+// --------------------
+// Upload de anexos
+// --------------------
+
+if ($request->hasFile('anexos')) {
+
+    foreach ($request->file('anexos') as $file) {
+
+        $path = $file->store('ticket_attachments', 'public');
+
+        $message->attachments()->create([
+            'filename' => $file->getClientOriginalName(),
+            'path' => $path,
+        ]);
+    }
+}
+
+
         // -------------------------
         // NOTIFICAÇÕES
         // -------------------------

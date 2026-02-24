@@ -20,7 +20,7 @@
             <div class="grid grid-cols-2 gap-4 text-sm">
                 <div><strong>Inbox:</strong> {{ $ticket->inbox->nome }}</div>
                 <div><strong>Criado por:</strong> {{ $ticket->cliente->name }}</div>
-                <div><strong>Estado:</strong>{{ $ticket->estado->nome ?? '—' }}</div>
+                <div><strong>Estado:</strong> {{ $ticket->estado->nome ?? '—' }}</div>
                 <div><strong>Prioridade:</strong> {{ $ticket->prioridade }}</div>
                 <div>
                     <strong>Operador:</strong>
@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        {{-- GESTÃO (APENAS OPERADOR) --}}
+        {{-- GESTÃO OPERADOR --}}
         @if(auth()->user()->isOperador())
         <div class="bg-white shadow rounded-lg p-6">
             <form method="POST" action="{{ route('tickets.update', $ticket) }}">
@@ -96,6 +96,19 @@
                         <div class="text-gray-800">
                             {{ $mensagem->mensagem }}
                         </div>
+
+                        @if($mensagem->attachments->count())
+                            <div class="mt-2 space-y-1">
+                                @foreach($mensagem->attachments as $anexo)
+                                    <a href="{{ asset('storage/' . $anexo->path) }}"
+                                       target="_blank"
+                                       class="block text-blue-600 text-sm underline">
+                                        📎 {{ $anexo->filename }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+
                     </div>
 
                 @empty
@@ -106,9 +119,7 @@
             </div>
         </div>
 
-
-
-                {{-- HISTÓRICO DE ATIVIDADE --}}
+        {{-- HISTÓRICO --}}
         <div class="bg-white shadow rounded-lg p-6">
             <h3 class="text-lg font-semibold mb-4">
                 Histórico de Atividade
@@ -132,10 +143,11 @@
             </div>
         </div>
 
-
         {{-- NOVA MENSAGEM --}}
         <div class="bg-white shadow rounded-lg p-6">
-            <form method="POST" action="{{ route('tickets.messages.store', $ticket) }}">
+            <form method="POST"
+                  action="{{ route('tickets.messages.store', $ticket) }}"
+                  enctype="multipart/form-data">
                 @csrf
 
                 <textarea name="mensagem"
@@ -143,6 +155,11 @@
                           class="w-full border rounded px-3 py-2 mb-3"
                           placeholder="Escreva a sua mensagem..."
                           required></textarea>
+
+                <input type="file"
+                       name="anexos[]"
+                       multiple
+                       class="w-full border rounded px-3 py-2 mb-3">
 
                 <div class="text-right">
                     <button class="bg-blue-600 text-white px-4 py-2 rounded">

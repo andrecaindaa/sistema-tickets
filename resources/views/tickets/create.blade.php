@@ -9,12 +9,12 @@
         <div class="bg-white shadow rounded-lg p-6">
 
             <form method="POST"
-                  action="{{ route('inboxes.tickets.store', $inbox) }}">
+                  action="{{ route('inboxes.tickets.store', $inbox) }}"
+                  enctype="multipart/form-data">
                 @csrf
 
                 <div class="grid grid-cols-2 gap-4">
 
-                    {{-- Inbox (apenas visual) --}}
                     <div>
                         <label class="block text-sm">Inbox</label>
                         <input type="text"
@@ -88,6 +88,17 @@
                            name="conhecimento"
                            class="w-full border rounded px-3 py-2"
                            placeholder="email1@empresa.com, email2@empresa.com">
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-sm">Anexos</label>
+                    <input type="file"
+                           name="anexos[]"
+                           multiple
+                           class="w-full border rounded px-3 py-2">
+                    <small class="text-gray-500 text-xs">
+                        Máx. 5MB por ficheiro
+                    </small>
                 </div>
 
                 <div class="mt-6 text-right">

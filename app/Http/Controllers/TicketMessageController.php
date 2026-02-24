@@ -13,13 +13,28 @@ class TicketMessageController extends Controller
         public function store(Request $request, Ticket $ticket)
     {
         $validated = $request->validate([
-            'mensagem' => 'required|string',
-        ]);
+        'mensagem' => 'required|string',
+        'anexos.*' => 'nullable|file|max:5120', // 5MB
+    ]);
 
-        $message = $ticket->mensagens()->create([
-            'mensagem' => $validated['mensagem'],
-            'user_id' => auth()->id(),
-        ]);
+    $message = $ticket->mensagens()->create([
+        'mensagem' => $validated['mensagem'],
+        'user_id' => auth()->id(),
+    ]);
+
+    // Upload anexos
+    if ($request->hasFile('anexos')) {
+
+        foreach ($request->file('anexos') as $file) {
+
+            $path = $file->store('ticket_attachments', 'public');
+
+            $message->attachments()->create([
+                'filename' => $file->getClientOriginalName(),
+                'path' => $path,
+            ]);
+        }
+    }
 
         // -------------------------
         // NOTIFICAÇÕES
