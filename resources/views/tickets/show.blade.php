@@ -20,7 +20,7 @@
             <div class="grid grid-cols-2 gap-4 text-sm">
                 <div><strong>Inbox:</strong> {{ $ticket->inbox->nome }}</div>
                 <div><strong>Criado por:</strong> {{ $ticket->cliente->name }}</div>
-                <div><strong>Estado:</strong> {{ $ticket->estado }}</div>
+                <div><strong>Estado:</strong>{{ $ticket->estado->nome ?? '—' }}</div>
                 <div><strong>Prioridade:</strong> {{ $ticket->prioridade }}</div>
                 <div>
                     <strong>Operador:</strong>
@@ -39,12 +39,14 @@
                 <div class="grid grid-cols-2 gap-4">
 
                     <div>
-                        <label class="block text-sm">Estado</label>
-                        <select name="estado" class="w-full border rounded px-3 py-2">
-                            <option value="aberto" {{ $ticket->estado == 'aberto' ? 'selected' : '' }}>Aberto</option>
-                            <option value="em_atendimento" {{ $ticket->estado == 'em_atendimento' ? 'selected' : '' }}>Em Atendimento</option>
-                            <option value="resolvido" {{ $ticket->estado == 'resolvido' ? 'selected' : '' }}>Resolvido</option>
-                            <option value="fechado" {{ $ticket->estado == 'fechado' ? 'selected' : '' }}>Fechado</option>
+                        <label class="block text-sm mb-1">Estado</label>
+                        <select name="ticket_estado_id" class="w-full border rounded px-3 py-2">
+                            @foreach($estados as $estado)
+                                <option value="{{ $estado->id }}"
+                                    {{ $ticket->ticket_estado_id == $estado->id ? 'selected' : '' }}>
+                                    {{ $estado->nome }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 

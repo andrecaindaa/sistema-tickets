@@ -33,7 +33,11 @@
                                     {{ $ticket->assunto }}
                                 </a>
                             </td>
-                            <td class="px-4 py-2">{{ $ticket->estado }}</td>
+                            <td class="px-4 py-2">
+                                <span class="px-2 py-1 rounded text-xs bg-gray-100">
+                                    {{ $ticket->estado->nome ?? '—' }}
+                                </span>
+                            </td>
                             <td class="px-4 py-2">{{ $ticket->prioridade }}</td>
                             <td class="px-4 py-2">{{ $ticket->created_at->format('d/m/Y') }}</td>
                         </tr>

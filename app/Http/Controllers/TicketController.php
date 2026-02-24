@@ -10,6 +10,8 @@ use App\Models\TicketEstado;
 use App\Models\TicketTipo;
 use App\Models\Entidade;
 use App\Models\Contacto;
+use App\Notifications\TicketCreatedNotification;
+use Illuminate\Support\Facades\Notification;
 
 class TicketController extends Controller
 {
@@ -61,7 +63,6 @@ class TicketController extends Controller
 
         // Converter CC em array
         $cc = null;
-
         if ($request->conhecimento) {
             $cc = array_map('trim', explode(',', $request->conhecimento));
         }
@@ -80,6 +81,28 @@ class TicketController extends Controller
             'contacto_id' => $validated['contacto_id'],
             'conhecimento' => $cc,
         ]);
+
+        // -------------------------
+        // NOTIFICAÇÕES
+        // -------------------------
+
+        // Notificar criador
+        $ticket->cliente->notify(
+            new TicketCreatedNotification($ticket)
+        );
+
+        // Notificar operador (se existir)
+        if ($ticket->operador) {
+            $ticket->operador->notify(
+                new TicketCreatedNotification($ticket)
+            );
+        }
+
+        // Notificar emails em CC
+        if (!empty($ticket->conhecimento)) {
+            Notification::route('mail', $ticket->conhecimento)
+                ->notify(new TicketCreatedNotification($ticket));
+        }
 
         return redirect()
             ->route('tickets.show', $ticket)
@@ -128,6 +151,19 @@ class TicketController extends Controller
             'ticket_estado_id' => 'required|exists:ticket_estados,id',
             'operador_id' => 'nullable|exists:users,id',
         ]);
+
+        // Garantir que operador tem role correta
+        if (!empty($validated['operador_id'])) {
+            $operador = User::where('id', $validated['operador_id'])
+                ->where('role', 'operador')
+                ->first();
+
+            if (!$operador) {
+                return back()->withErrors([
+                    'operador_id' => 'Utilizador inválido.'
+                ]);
+            }
+        }
 
         $ticket->update($validated);
 
