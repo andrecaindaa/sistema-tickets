@@ -95,5 +95,10 @@ class Ticket extends Model
     {
         return $this->belongsTo(Contacto::class);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(TicketLog::class)->latest();
+    }
 }
 

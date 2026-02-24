@@ -106,6 +106,33 @@
             </div>
         </div>
 
+
+
+                {{-- HISTÓRICO DE ATIVIDADE --}}
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold mb-4">
+                Histórico de Atividade
+            </h3>
+
+            <div class="space-y-3">
+                @forelse($ticket->logs as $log)
+
+                    <div class="text-sm text-gray-600 border-b pb-2">
+                        <strong>{{ $log->user->name }}</strong>
+                        • {{ $log->created_at->format('d/m/Y H:i') }}
+                        <br>
+                        {{ $log->descricao }}
+                    </div>
+
+                @empty
+                    <p class="text-gray-500">
+                        Sem alterações registadas.
+                    </p>
+                @endforelse
+            </div>
+        </div>
+
+
         {{-- NOVA MENSAGEM --}}
         <div class="bg-white shadow rounded-lg p-6">
             <form method="POST" action="{{ route('tickets.messages.store', $ticket) }}">

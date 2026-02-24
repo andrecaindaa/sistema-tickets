@@ -12,6 +12,7 @@ use App\Models\Entidade;
 use App\Models\Contacto;
 use App\Notifications\TicketCreatedNotification;
 use Illuminate\Support\Facades\Notification;
+use App\Models\TicketLog;
 
 class TicketController extends Controller
 {
@@ -178,6 +179,7 @@ class TicketController extends Controller
             'tipo',
             'entidade',
             'contacto',
+            'logs.user',
         ]);
 
         $operadores = User::where('role', 'operador')->get();
@@ -213,7 +215,43 @@ class TicketController extends Controller
             }
         }
 
+        $originalEstado = $ticket->ticket_estado_id;
+        $originalOperador = $ticket->operador_id;
+
+        // Atualiza uma única vez
         $ticket->update($validated);
+
+        // --------------------
+        // LOG ESTADO
+        // --------------------
+        if ($originalEstado != $validated['ticket_estado_id']) {
+
+            $novoEstado = TicketEstado::find($validated['ticket_estado_id']);
+
+            TicketLog::create([
+                'ticket_id' => $ticket->id,
+                'user_id' => auth()->id(),
+                'acao' => 'alterou_estado',
+                'descricao' => 'Alterou estado para: ' . $novoEstado->nome,
+            ]);
+        }
+
+        // --------------------
+        // LOG OPERADOR
+        // --------------------
+        if ($originalOperador != $validated['operador_id']) {
+
+            $novoOperador = $validated['operador_id']
+                ? User::find($validated['operador_id'])->name
+                : 'Nenhum';
+
+            TicketLog::create([
+                'ticket_id' => $ticket->id,
+                'user_id' => auth()->id(),
+                'acao' => 'alterou_operador',
+                'descricao' => 'Alterou operador para: ' . $novoOperador,
+            ]);
+        }
 
         return back()->with('success', 'Ticket atualizado.');
     }
