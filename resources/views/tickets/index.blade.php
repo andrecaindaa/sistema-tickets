@@ -13,6 +13,63 @@
         </a>
 
         <div class="bg-white shadow rounded-lg overflow-hidden">
+
+            <form method="GET" class="bg-white p-4 rounded shadow mb-4">
+    <div class="grid grid-cols-6 gap-4">
+
+        <input type="text"
+               name="search"
+               placeholder="Pesquisar..."
+               value="{{ request('search') }}"
+               class="border rounded px-3 py-2">
+
+        <select name="estado" class="border rounded px-3 py-2">
+            <option value="">Estado</option>
+            @foreach($estados as $estado)
+                <option value="{{ $estado->id }}"
+                    {{ request('estado') == $estado->id ? 'selected' : '' }}>
+                    {{ $estado->nome }}
+                </option>
+            @endforeach
+        </select>
+
+        <select name="operador" class="border rounded px-3 py-2">
+            <option value="">Operador</option>
+            @foreach($operadores as $operador)
+                <option value="{{ $operador->id }}"
+                    {{ request('operador') == $operador->id ? 'selected' : '' }}>
+                    {{ $operador->name }}
+                </option>
+            @endforeach
+        </select>
+
+        <select name="tipo" class="border rounded px-3 py-2">
+            <option value="">Tipo</option>
+            @foreach($tipos as $tipo)
+                <option value="{{ $tipo->id }}"
+                    {{ request('tipo') == $tipo->id ? 'selected' : '' }}>
+                    {{ $tipo->nome }}
+                </option>
+            @endforeach
+        </select>
+
+        <select name="entidade" class="border rounded px-3 py-2">
+            <option value="">Entidade</option>
+            @foreach($entidades as $entidade)
+                <option value="{{ $entidade->id }}"
+                    {{ request('entidade') == $entidade->id ? 'selected' : '' }}>
+                    {{ $entidade->nome }}
+                </option>
+            @endforeach
+        </select>
+
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">
+            Filtrar
+        </button>
+
+    </div>
+</form>
+
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>

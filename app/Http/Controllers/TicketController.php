@@ -18,20 +18,68 @@ class TicketController extends Controller
     /**
      * Listagem de tickets por inbox
      */
-    public function index(Inbox $inbox)
+    public function index(Request $request, Inbox $inbox)
     {
         $user = auth()->user();
 
-        $query = $inbox->tickets()->latest();
+        $query = $inbox->tickets()
+            ->with(['estado', 'tipo', 'cliente', 'operador', 'entidade'])
+            ->latest();
 
-        // Cliente só vê tickets da sua entidade
+        // Cliente só vê os seus tickets
         if ($user->isCliente()) {
             $query->where('user_id', $user->id);
         }
 
-        $tickets = $query->with(['estado', 'tipo'])->get();
+        // -----------------------
+        // FILTROS
+        // -----------------------
 
-        return view('tickets.index', compact('inbox', 'tickets'));
+        if ($request->estado) {
+            $query->where('ticket_estado_id', $request->estado);
+        }
+
+        if ($request->operador) {
+            $query->where('operador_id', $request->operador);
+        }
+
+        if ($request->tipo) {
+            $query->where('ticket_tipo_id', $request->tipo);
+        }
+
+        if ($request->entidade) {
+            $query->where('entidade_id', $request->entidade);
+        }
+
+        // -----------------------
+        // PESQUISA
+        // -----------------------
+
+        if ($request->search) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('numero', 'like', "%{$search}%")
+                ->orWhere('assunto', 'like', "%{$search}%")
+                ->orWhereHas('cliente', function ($q2) use ($search) {
+                    $q2->where('email', 'like', "%{$search}%");
+                })
+                ->orWhereHas('entidade', function ($q3) use ($search) {
+                    $q3->where('nome', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $tickets = $query->get();
+
+        return view('tickets.index', [
+            'inbox' => $inbox,
+            'tickets' => $tickets,
+            'estados' => TicketEstado::all(),
+            'operadores' => User::where('role', 'operador')->get(),
+            'tipos' => TicketTipo::all(),
+            'entidades' => Entidade::all(),
+        ]);
     }
 
     /**
