@@ -77,4 +77,9 @@ class User extends Authenticatable
         return $this->hasMany(TicketMessage::class);
     }
 
+    public function entidades()
+    {
+        return $this->belongsToMany(\App\Models\Entidade::class);
+    }
+
 }

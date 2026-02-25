@@ -10,13 +10,13 @@ class Inbox extends Model
 
     public function operadores()
     {
-        return $this->belongsToMany(User::class);
+         return $this->belongsToMany(\App\Models\User::class)
+        ->where('role', 'operador');
     }
 
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
     }
-
 
 }

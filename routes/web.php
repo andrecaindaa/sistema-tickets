@@ -13,6 +13,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('inboxes', InboxController::class);
 
+    Route::resource('inboxes', InboxController::class)->only(['edit','update']);
+
     Route::resource('inboxes.tickets', TicketController::class)
         ->shallow();
 

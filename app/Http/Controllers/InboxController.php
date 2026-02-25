@@ -16,7 +16,7 @@ class InboxController extends Controller
 
     public function create()
     {
-        $operadores = User::where('role', 'operador')->get();
+        $operadores = User::where('role', 'operador')->orderBy('name')->get();
         return view('inboxes.create', compact('operadores'));
     }
 
@@ -44,7 +44,7 @@ class InboxController extends Controller
 
     public function edit(Inbox $inbox)
     {
-        $operadores = User::where('role', 'operador')->get();
+        $operadores = User::where('role', 'operador')->orderBy('name')->get();
         return view('inboxes.edit', compact('inbox', 'operadores'));
     }
 

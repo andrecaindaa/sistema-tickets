@@ -21,5 +21,9 @@ class Entidade extends Model
         return $this->belongsToMany(Contacto::class);
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(\App\Models\User::class);
+    }
 
 }

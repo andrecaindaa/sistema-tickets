@@ -23,6 +23,32 @@
 
                     @include('entidades.partials.form')
 
+                    @if(isset($clientes) && $clientes->count() > 0)
+                        <hr class="my-6">
+
+                        <h3 class="text-lg font-semibold mb-3">Clientes Associados</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            @foreach($clientes as $cliente)
+                                <label class="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
+                                    <input type="checkbox"
+                                           name="clientes[]"
+                                           value="{{ $cliente->id }}"
+                                           class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                           {{ isset($entidade) && $entidade->users->contains($cliente->id) ? 'checked' : '' }}>
+                                    <span class="text-sm text-gray-700">
+                                        {{ $cliente->name }}
+                                        <span class="text-gray-500 text-xs">({{ $cliente->email }})</span>
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <p class="text-sm text-gray-500 mt-2">
+                            Selecione os clientes que pertencem a esta entidade
+                        </p>
+                    @endif
+
                     <div class="mt-6 flex justify-end space-x-3">
                         <a href="{{ route('entidades.index') }}"
                            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200">
