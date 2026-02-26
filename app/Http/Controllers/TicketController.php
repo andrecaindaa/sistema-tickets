@@ -13,6 +13,7 @@ use App\Models\Contacto;
 use App\Notifications\TicketCreatedNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Models\TicketLog;
+//use App\Models\TicketPrioridade;
 
 class TicketController extends Controller
 {
@@ -119,6 +120,7 @@ class TicketController extends Controller
         // Estado default = Aberto
         $estadoAberto = TicketEstado::where('nome', 'Aberto')->first();
 
+       // $prioridadeMedia = TicketPrioridade::where('nome', 'Média')->first();
         $ticket = Ticket::create([
             'inbox_id' => $inbox->id,
             'user_id' => auth()->id(),
@@ -129,6 +131,7 @@ class TicketController extends Controller
             'entidade_id' => $validated['entidade_id'],
             'contacto_id' => $validated['contacto_id'],
             'conhecimento' => $cc,
+            //'ticket_prioridade_id' => $prioridadeMedia->id,
         ]);
 
 
@@ -210,8 +213,9 @@ if ($request->hasFile('anexos')) {
 
         $operadores = User::where('role', 'operador')->get();
         $estados = TicketEstado::all();
+        //$prioridades = TicketPrioridade::orderBy('ordem')->get();
 
-        return view('tickets.show', compact('ticket', 'operadores', 'estados'));
+        return view('tickets.show', compact('ticket', 'operadores', 'estados', 'prioridades'));
     }
 
     /**
@@ -226,6 +230,7 @@ if ($request->hasFile('anexos')) {
         $validated = $request->validate([
             'ticket_estado_id' => 'required|exists:ticket_estados,id',
             'operador_id' => 'nullable|exists:users,id',
+            //'ticket_prioridade_id' => 'required|exists:ticket_prioridades,id',
         ]);
 
         // Garantir que operador tem role correta

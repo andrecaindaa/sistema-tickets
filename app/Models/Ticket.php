@@ -19,7 +19,7 @@ class Ticket extends Model
         'entidade_id',
         'contacto_id',
         'conhecimento',
-        'prioridade',
+        //'prioridade',
     ];
         protected $casts = [
         'conhecimento' => 'array',
@@ -101,4 +101,3 @@ class Ticket extends Model
         return $this->hasMany(TicketLog::class)->latest();
     }
 }
-

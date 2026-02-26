@@ -21,12 +21,13 @@ class DatabaseSeeder extends Seeder
         TicketTipoSeeder::class,
         TicketSetupSeeder::class,
         TicketEstadoSeeder::class,
+        TicketPrioridadeSeeder::class,
     ]);
         User::firstOrCreate(
-            ['email' => 'test@example.com'],
+            ['email' => 'delfinacaiombe2023@gmail.com'],
             [
-                'name' => 'Test User',
-                'password' => bcrypt('password'),
+                'name' => 'Admin',
+                'password' => bcrypt('1234567'),
             ]
         );
             }
