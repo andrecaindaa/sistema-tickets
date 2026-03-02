@@ -82,4 +82,9 @@ class User extends Authenticatable
         return $this->belongsToMany(\App\Models\Entidade::class);
     }
 
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
 }

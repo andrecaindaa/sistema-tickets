@@ -215,7 +215,7 @@ if ($request->hasFile('anexos')) {
         $estados = TicketEstado::all();
         //$prioridades = TicketPrioridade::orderBy('ordem')->get();
 
-        return view('tickets.show', compact('ticket', 'operadores', 'estados', 'prioridades'));
+        return view('tickets.show', compact('ticket', 'operadores', 'estados'));
     }
 
     /**
