@@ -24,7 +24,8 @@ class FuncaoSeeder extends Seeder
         ];
 
         foreach ($funcoes as $nome) {
-            Funcao::create(['nome' => $nome]);
+            //Funcao::create(['nome' => $nome]);
+            Funcao::firstOrCreate(['nome' => $nome]);
         }
     }
 

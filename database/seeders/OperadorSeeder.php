@@ -2,21 +2,31 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class OperadorSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run()
+    public function run(): void
     {
-        \App\Models\User::create([
-            'name' => 'Operador 1',
-            'email' => 'operador1@empresa.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
-            'role' => 'operador',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'operador1@empresa.com'],
+            [
+                'name' => 'Operador 1',
+                'password' => Hash::make('password'),
+                'role' => 'operador',
+            ]
+        );
+
+        //  adicionado mais um operador
+        User::firstOrCreate(
+            ['email' => 'operador2@empresa.com'],
+            [
+                'name' => 'Operador 2',
+                'password' => Hash::make('password'),
+                'role' => 'operador',
+            ]
+        );
     }
 }

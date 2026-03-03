@@ -1,25 +1,21 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\TicketEstado;
-use App\Models\TicketTipo;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\TicketTipo;
 
 class TicketSetupSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
-        {
-            TicketTipo::insert([
-        ['nome' => 'Pedido de Informação'],
-        ['nome' => 'Incidente'],
-        ['nome' => 'Reclamação'],
-    ]);
+    {
+        $tipos = [
+            'Pedido de Informação',
+            'Incidente',
+            'Reclamação'
+        ];
 
-
-        }
+        foreach ($tipos as $nome) {
+            TicketTipo::firstOrCreate(['nome' => $nome]);
+    }
 }
