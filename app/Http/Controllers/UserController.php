@@ -52,4 +52,11 @@ class UserController extends Controller
             abort(403);
         }
     }
+
+    public function __construct()
+    {
+        if (!auth()->user()?->isAdmin()) {
+            abort(403);
+        }
+    }
 }

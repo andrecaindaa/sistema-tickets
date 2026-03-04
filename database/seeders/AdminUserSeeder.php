@@ -16,7 +16,7 @@ class AdminUserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'password' => Hash::make('1234567'),
-                'role' => 'operador', // ALTERADO: 'admin' não existe, usar 'operador'
+                'role' => 'admin', // ALTERADO: 'admin' não existe, usar 'operador'
             ]
         );
     }
