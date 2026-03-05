@@ -1,59 +1,158 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Tickets
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema de gestão de tickets interno e externo que permite a **gestão centralizada de pedidos e comunicações**, segmentados por diferentes áreas da organização.
 
-## About Laravel
+Este projeto foi desenvolvido no âmbito académico e tem como objetivo implementar um sistema funcional de suporte e comunicação entre clientes e operadores.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# 1. Estrutura do Sistema
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+O sistema organiza os tickets através de **Inboxes (Departamentos)** que representam diferentes áreas da organização.
 
-## Learning Laravel
+Cada inbox possui:
+- Operadores próprios
+- Permissões específicas
+- Sistema de notificações
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Inboxes disponíveis
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Comercial
+- Apoio Técnico
+- Recursos Humanos
 
-## Laravel Sponsors
+Cada departamento consegue gerir os seus próprios tickets de forma independente.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+# 2. Tipos de Utilizadores
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Operadores
 
-## Contributing
+Os operadores são responsáveis pela gestão dos tickets.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Podem:
 
-## Code of Conduct
+- Criar tickets
+- Responder a tickets
+- Atribuir operadores responsáveis
+- Alterar o estado do ticket
+- Gerir tickets nas inboxes às quais têm acesso
+- Receber notificações quando um ticket é atribuído ou atualizado
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## Clientes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Os clientes podem interagir com o sistema para criar pedidos ou responder a tickets.
 
-## License
+Podem:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Criar tickets
+- Responder a tickets existentes
+- Visualizar apenas tickets associados à sua entidade
+
+---
+
+
+# 3. Funcionalidades Principais
+
+## Criação de Tickets
+
+Os tickets podem ser criados por **clientes ou operadores**.
+
+Funcionalidades:
+
+- Geração automática de número de ticket
+- Formato: `TC-XXX`
+- Associação a entidade e contacto
+- Possibilidade de anexar ficheiros
+
+### Notificações automáticas
+
+Ao criar um ticket são enviadas notificações por email para:
+
+- Criador do ticket
+- Endereços em conhecimento (CC)
+- Operador associado (se existir)
+
+---
+
+## Respostas
+
+Cada ticket pode ter várias respostas associadas.
+
+Funcionalidades:
+
+- Texto formatado
+- Upload de anexos
+- Inserção de imagens
+
+### Notificações
+
+Cada resposta envia notificações para:
+
+- Criador do ticket
+- Contactos em conhecimento
+
+---
+
+## Gestão e Visualização
+
+O sistema permite uma gestão eficiente através de filtros e pesquisa.
+
+### Filtros disponíveis
+
+- Inbox
+- Estado
+- Operador
+- Tipo
+- Entidade
+
+### Pesquisa rápida
+
+É possível pesquisar por:
+
+- Nº do ticket
+- Assunto
+- Email
+- Entidade
+
+---
+
+## Histórico
+
+Cada ticket possui um **histórico completo de atividade**, incluindo:
+
+- Mensagens enviadas
+- Alterações de estado
+- Mudanças de operador
+- Registos de atividade
+
+---
+
+# 4. Notificações
+
+O sistema inclui um módulo de **notificações por email** com templates configuráveis.
+
+Estas notificações informam os utilizadores sobre:
+
+- Criação de tickets
+- Novas respostas
+- Alterações de estado
+- Atribuição de operador
+
+---
+
+# 5. Referências Visuais
+
+A interface do sistema inspira-se no seguinte sistema de gestão de suporte:
+
+**Kirridesk - Customer Service Management System**
+
+---
+
+
+# Autor
+
+André Cainda
