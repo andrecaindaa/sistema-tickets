@@ -210,9 +210,17 @@ class TicketController extends Controller
             abort(403);
         }
         // CLIENTE só vê os seus tickets
-        elseif ($user->isCliente() && $ticket->user_id !== $user->id) {
-            abort(403);
-        }
+        elseif ($user->isCliente()) {
+
+    $emailsCC = $ticket->conhecimento ?? [];
+
+    if (
+        $ticket->user_id !== $user->id &&
+        !in_array($user->email, $emailsCC)
+    ) {
+        abort(403);
+    }
+}
 
         $ticket->load([
             'cliente',
@@ -307,16 +315,21 @@ class TicketController extends Controller
     }
 
     public function meusTickets()
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        $tickets = Ticket::with(['estado', 'tipo', 'inbox'])
-            ->where('user_id', $user->id)
-            ->latest()
-            ->get();
+    $tickets = Ticket::with(['estado','tipo','inbox'])
+        ->where(function ($q) use ($user) {
 
-        return view('tickets.meus', compact('tickets'));
-    }
+            $q->where('user_id', $user->id)
+              ->orWhereJsonContains('conhecimento', $user->email);
+
+        })
+        ->latest()
+        ->get();
+
+    return view('tickets.meus', compact('tickets'));
+}
 
     /**
      * Eliminar ticket
@@ -350,4 +363,131 @@ class TicketController extends Controller
             ->route('inboxes.tickets.index', $inboxId)
             ->with('success', 'Ticket eliminado com sucesso.');
     }
+
+
+
+    ///////////////////////
+
+   /**
+ * Formulário para cliente criar ticket
+ */
+
+public function createCliente()
+{
+    $user = auth()->user();
+
+    if (!$user->isCliente()) {
+        dd('Erro: Utilizador não é cliente', $user->role); // DEBUG
+    }
+
+    // Buscar entidades do cliente
+    $entidades = $user->entidades()->orderBy('nome')->get();
+
+    if ($entidades->isEmpty()) {
+        dd('Erro: Cliente sem entidades associadas', $user->toArray()); // DEBUG
+    }
+
+    // Buscar contactos de TODAS as entidades do cliente
+    $contactos = Contacto::whereHas('entidades', function($query) use ($entidades) {
+        $query->whereIn('entidades.id', $entidades->pluck('id'));
+    })->with('funcao', 'entidades')->orderBy('nome')->get();
+
+//dd($contactos);
+    return view('tickets.create_cliente', [
+        'tipos' => TicketTipo::all(),
+        'entidades' => $entidades,
+        'contactos' => $contactos,
+    ]);
+}
+
+/**
+ * Guardar ticket criado por cliente
+ */
+public function storeCliente(Request $request)
+{
+    $user = auth()->user();
+
+    if (!$user->isCliente()) {
+        abort(403);
+    }
+
+    $validated = $request->validate([
+        'assunto' => 'required|string|max:255',
+        'mensagem' => 'required|string',
+        'ticket_tipo_id' => 'required|exists:ticket_tipos,id',
+        'entidade_id' => 'required|exists:entidades,id',
+        'contacto_id' => 'required|exists:contactos,id',
+        'conhecimento' => 'nullable|string',
+    ]);
+
+    // Verificar se a entidade pertence ao cliente
+    $entidadeIds = $user->entidades()->pluck('entidades.id')->toArray();
+    if (!in_array($validated['entidade_id'], $entidadeIds)) {
+        abort(403);
+    }
+
+    // Verificar se o contacto pertence à entidade
+    $contacto = Contacto::with('entidades')->find($validated['contacto_id']);
+    $contactoEntidadeIds = $contacto->entidades->pluck('id')->toArray();
+
+    if (!in_array($validated['entidade_id'], $contactoEntidadeIds)) {
+        return back()->withErrors([
+            'contacto_id' => 'O contacto selecionado não pertence a esta entidade.'
+        ])->withInput();
+    }
+
+    // Converter CC em array
+    $cc = null;
+    if ($request->conhecimento) {
+        $cc = array_map('trim', explode(',', $request->conhecimento));
+    }
+
+    // Estado default = Aberto
+    $estadoAberto = TicketEstado::where('nome', 'Aberto')->first();
+
+    // Definir inbox (podes escolher uma inbox padrão para clientes)
+    // Por exemplo, a primeira inbox ou uma específica para "Apoio ao Cliente"
+    $inbox = Inbox::first(); // Ajusta conforme necessário
+
+    $ticket = Ticket::create([
+        'inbox_id' => $inbox->id,
+        'user_id' => $user->id,
+        'assunto' => $validated['assunto'],
+        'descricao' => $validated['mensagem'],
+        'ticket_tipo_id' => $validated['ticket_tipo_id'],
+        'ticket_estado_id' => $estadoAberto->id,
+        'entidade_id' => $validated['entidade_id'],
+        'contacto_id' => $validated['contacto_id'],
+        'conhecimento' => $cc,
+    ]);
+
+    // Criar primeira mensagem
+    $message = $ticket->mensagens()->create([
+        'mensagem' => $validated['mensagem'],
+        'user_id' => $user->id,
+    ]);
+
+    // Upload de anexos
+    if ($request->hasFile('anexos')) {
+        foreach ($request->file('anexos') as $file) {
+            $path = $file->store('ticket_attachments', 'public');
+            $message->attachments()->create([
+                'filename' => $file->getClientOriginalName(),
+                'path' => $path,
+            ]);
+        }
+    }
+
+    // NOTIFICAÇÕES
+    $ticket->cliente->notify(new TicketCreatedNotification($ticket));
+
+    if (!empty($ticket->conhecimento)) {
+        Notification::route('mail', $ticket->conhecimento)
+            ->notify(new TicketCreatedNotification($ticket));
+    }
+
+    return redirect()
+        ->route('tickets.show', $ticket)
+        ->with('success', 'Ticket criado com sucesso.');
+}
 }

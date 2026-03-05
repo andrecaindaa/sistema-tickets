@@ -24,7 +24,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                    {{-- Entidade (selecionável para cliente) --}}
+                    {{-- Entidade --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Entidade <span class="text-red-500">*</span>
@@ -45,7 +45,7 @@
                         @enderror
                     </div>
 
-                    {{-- Contacto (filtrado por entidade) --}}
+                    {{-- Contacto --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Contacto <span class="text-red-500">*</span>
@@ -56,9 +56,7 @@
                                 required>
                             <option value="">Selecionar contacto...</option>
                             @foreach($contactos as $contacto)
-                                <option value="{{ $contacto->id }}"
-                                        data-entidades="{{ $contacto->entidades->pluck('id')->join(',') }}"
-                                        {{ old('contacto_id') == $contacto->id ? 'selected' : '' }}>
+                                <option value="{{ $contacto->id }}" {{ old('contacto_id') == $contacto->id ? 'selected' : '' }}>
                                     {{ $contacto->nome }}
                                     @if($contacto->funcao)
                                         ({{ $contacto->funcao->nome }})
@@ -90,9 +88,6 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    {{-- Campo vazio para manter grid --}}
-                    <div></div>
 
                 </div>
 
@@ -169,42 +164,4 @@
             </form>
         </div>
     </div>
-
-    @push('scripts')
-    <script>
-        // Filtrar contactos por entidade selecionada
-        document.getElementById('entidade_id').addEventListener('change', function() {
-            const entidadeId = this.value;
-            const contactoSelect = document.getElementById('contacto_id');
-            const options = contactoSelect.options;
-
-            for (let i = 0; i < options.length; i++) {
-                const option = options[i];
-                if (option.value === '') continue; // Skip placeholder option
-
-                const entidadesPermitidas = option.dataset.entidades ? option.dataset.entidades.split(',') : [];
-
-                if (entidadeId === '' || entidadesPermitidas.includes(entidadeId)) {
-                    option.style.display = '';
-                } else {
-                    option.style.display = 'none';
-                }
-            }
-
-            // Reset selection if current selection is hidden
-            if (contactoSelect.selectedOptions[0] &&
-                contactoSelect.selectedOptions[0].style.display === 'none') {
-                contactoSelect.value = '';
-            }
-        });
-
-        // Trigger on page load if there's a selected entidade
-        document.addEventListener('DOMContentLoaded', function() {
-            const entidadeSelect = document.getElementById('entidade_id');
-            if (entidadeSelect.value) {
-                entidadeSelect.dispatchEvent(new Event('change'));
-            }
-        });
-    </script>
-    @endpush
 </x-app-layout>

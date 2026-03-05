@@ -15,7 +15,7 @@
             </div>
 
             {{-- ============================= --}}
-            {{-- 🔵 ÁREA OPERACIONAL --}}
+            {{--  ÁREA OPERACIONAL --}}
             {{-- ============================= --}}
 
             @if(isset($inboxes))
@@ -58,10 +58,19 @@
                             {{ $meusTickets }} tickets abertos
                         </p>
 
-                        <a href="{{ route('meus.tickets') }}"
-                           class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                            Ver Tickets
-                        </a>
+                        <div class="flex space-x-3">
+                            {{-- BOTÃO PARA VER TICKETS --}}
+                            <a href="{{ route('meus.tickets') }}"
+                               class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                                Ver Tickets
+                            </a>
+
+                            {{-- BOTÃO PARA CRIAR NOVO TICKET --}}
+                            <a href="{{ route('clientes.tickets.create') }}"
+                               class="inline-block bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                + Novo Ticket
+                            </a>
+                        </div>
                     </div>
                 </div>
             @endif
